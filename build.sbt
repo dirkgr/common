@@ -1,5 +1,22 @@
+import sbtrelease.ReleaseStateTransformations._
+
+ivyLoggingLevel in ThisBuild := UpdateLogging.Quiet
+
 lazy val buildSettings = Seq(
   organization := "org.allenai.common",
+  releaseProcess := Seq(
+    checkSnapshotDependencies,
+    inquireVersions,
+    runClean,
+    runTest,
+    setReleaseVersion,
+    commitReleaseVersion,
+    tagRelease,
+    publishArtifacts,
+    setNextVersion,
+    commitNextVersion,
+    pushChanges
+  ),
   crossScalaVersions := Seq(Dependencies.defaultScalaVersion),
   scalaVersion <<= crossScalaVersions { (vs: Seq[String]) => vs.head },
   publishMavenStyle := true,
@@ -20,6 +37,7 @@ lazy val buildSettings = Seq(
       </developer>
     </developers>),
   bintrayPackage := s"${organization.value}:${name.value}_${scalaBinaryVersion.value}",
+  bintrayRepository := "maven",
   releasePublishArtifactsAction := PgpKeys.publishSigned.value
 )
 
