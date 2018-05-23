@@ -19,7 +19,8 @@ lazy val buildSettings = Seq(
         <email>dev-role@allenai.org</email>
       </developer>
     </developers>),
-  bintrayPackage := s"${organization.value}:${name.value}_${scalaBinaryVersion.value}"
+  bintrayPackage := s"${organization.value}:${name.value}_${scalaBinaryVersion.value}",
+  releasePublishArtifactsAction := PgpKeys.publishSigned.value
 )
 
 lazy val cache = Project(id = "cache", base = file("cache"))
