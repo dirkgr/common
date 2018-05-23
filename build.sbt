@@ -4,6 +4,10 @@ ivyLoggingLevel in ThisBuild := UpdateLogging.Quiet
 
 lazy val buildSettings = Seq(
   organization := "org.allenai.common",
+  resolvers ++= Seq(
+    "AllenAI Bintray" at "http://dl.bintray.com/allenai/maven",
+    Resolver.jcenterRepo
+  ),
   releaseProcess := Seq(
     checkSnapshotDependencies,
     inquireVersions,
@@ -17,17 +21,17 @@ lazy val buildSettings = Seq(
     commitNextVersion,
     pushChanges
   ),
-  crossScalaVersions := Seq(Dependencies.defaultScalaVersion),
-  scalaVersion <<= crossScalaVersions { (vs: Seq[String]) => vs.head },
-  publishMavenStyle := true,
-  publishArtifact in Test := false,
-  pomIncludeRepository := { _ => false },
+  bintrayPackage := s"${organization.value}:${name.value}_${scalaBinaryVersion.value}",
   licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html")),
   homepage := Some(url("https://github.com/allenai/common")),
-  apiURL := Some(url("https://allenai.github.io/common/")),
   scmInfo := Some(ScmInfo(
     url("https://github.com/allenai/common"),
     "https://github.com/allenai/common.git")),
+  bintrayRepository := "maven",
+  publishMavenStyle := true,
+  publishArtifact in Test := false,
+  pomIncludeRepository := { _ => false },
+  releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   pomExtra := (
     <developers>
       <developer>
@@ -36,9 +40,9 @@ lazy val buildSettings = Seq(
         <email>dev-role@allenai.org</email>
       </developer>
     </developers>),
-  bintrayPackage := s"${organization.value}:${name.value}_${scalaBinaryVersion.value}",
-  bintrayRepository := "maven",
-  releasePublishArtifactsAction := PgpKeys.publishSigned.value
+  crossScalaVersions := Seq(Dependencies.defaultScalaVersion),
+  scalaVersion <<= crossScalaVersions { (vs: Seq[String]) => vs.head },
+  apiURL := Some(url("https://allenai.github.io/common/"))
 )
 
 lazy val cache = Project(id = "cache", base = file("cache"))
